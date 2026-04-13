@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Hipótesis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Calculadora de Prueba de Hipótesis (Z)</h2>
+
+<label>Media muestral (x̄):</label>
+<input id="xbar" type="number"><br><br>
+
+<label>Media poblacional (μ):</label>
+<input id="mu" type="number"><br><br>
+
+<label>Desviación estándar (σ):</label>
+<input id="sigma" type="number"><br><br>
+
+<label>Tamaño de la muestra (n):</label>
+<input id="n" type="number"><br><br>
+
+<label>Nivel de significancia (α):</label>
+<input id="alpha" type="number" value="0.05"><br><br>
+
+<button onclick="calcular()">Calcular</button>
+
+<h3 id="resultado"></h3>
+
+<canvas id="grafica" width="600" height="300"></canvas>
+
+<script>
+function calcular() {
+    let xbar = parseFloat(document.getElementById("xbar").value);
+    let mu = parseFloat(document.getElementById("mu").value);
+    let sigma = parseFloat(document.getElementById("sigma").value);
+    let n = parseInt(document.getElementById("n").value);
+    let alpha = parseFloat(document.getElementById("alpha").value);
+
+    let z = (xbar - mu) / (sigma / Math.sqrt(n));
+
+    let zc = (alpha == 0.01) ? 2.58 : 1.96;
+
+    let decision = Math.abs(z) > zc ? "SE RECHAZA H₀" : "NO se rechaza H₀";
+
+    document.getElementById("resultado").innerText =
+        "Z = " + z.toFixed(2) + " → " + decision;
+
+    // Crear curva normal
+    let x = [];
+    let y = [];
+
+    for (let i = -4; i <= 4; i += 0.1) {
+        x.push(i);
+        y.push(Math.exp(-0.5 * i * i) / Math.sqrt(2 * Math.PI));
+    }
+
+    // Dibujar gráfica
+    new Chart(document.getElementById("grafica"), {
+        type: "line",
+        data: {
+            labels: x,
+            datasets: [{
+                label: "Distribución Normal",
+                data: y,
+                borderWidth: 2
+            }]
+        }
+    });
+}
+</script>
+
+</body>
+</html>
 
